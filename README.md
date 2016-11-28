@@ -30,3 +30,11 @@ NEXT STEPS?
 ----------
 
 A visual UI might be a next logical step.
+
+INSTALLATION INSTRUCTIONS
+------------------------
+
+- git clone this repo
+- hit 'bundle' on your command line
+- run 'ruby app.rb'
+- set your browser window to 'localhost:4000'
