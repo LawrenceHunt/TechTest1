@@ -1,9 +1,11 @@
 require 'sinatra'
-set :port, 4000
-
 require_relative 'lib/key_value.rb'
+require_relative 'lib/key_value_array.rb'
 
 class Test1Ruby < Sinatra::Base
+
+set :port, 4000
+enable :sessions
 
   before do
     @key_value_array = KeyValueArray.instance || KeyValueArray.create
@@ -13,17 +15,44 @@ class Test1Ruby < Sinatra::Base
   erb :'index'
   end
 
-  post '/set?:somekey=:somevalue' do
-    key = params[:somekey]
-    value = params[:somevalue]
+  get '/set' do
+    key = params.flatten[-2]
+    value = params.flatten[-1]
+    session[:key] = key
+    session[:value] = value
     key_value = KeyValue.new(key, value)
     @key_value_array.array << key_value
+    erb :'saved'
   end
 
-  get '/get?key=:somekey' do
+  get '/get' do
     key = params[:somekey]
-    @key_value_array.find_value(key)
+    if key = session[:key]
+      @result = session[:value]
+    else
+      @result = 'FUCK OFF'
+    end
+    erb :'result'
   end
+
+  #
+  # get '/set' do
+  #   key = params.flatten[-2]
+  #   value = params.flatten[-1]
+  #   key_value = KeyValue.new(key, value)
+  #   @key_value_array.array << key_value
+  #   erb :'saved'
+  # end
+  #
+  # get '/get' do
+  #   key = params[:somekey]
+  #   if key = session[:key]
+  #     @result = session[:value]
+  #   else
+  #     @result = 'FUCK OFF'
+  #   end
+  #   erb :'result'
+  # end
 
   run! if app_file == $0
 end
